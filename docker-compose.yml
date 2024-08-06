@@ -1,0 +1,35 @@
+networks:
+  memory:
+
+services:
+  k6:
+    image: loadimpact/k6:latest
+    container_name: k6
+    networks:
+      - memory
+    ports:
+      - "6565:6565"
+    volumes:
+      - ./k6/scripts:/scripts
+
+  next:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: next
+    networks:
+      - memory
+    ports:
+      - "3000:3000"
+    environment:
+      - URL=http://api:4000/url
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api
+    networks:
+      - memory
+    ports:
+      - "4000:4000"
